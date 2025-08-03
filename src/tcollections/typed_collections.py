@@ -2,10 +2,10 @@ from __future__ import annotations
 import typing
 import dataclasses
 import collections
-
 import abc
+from typing import Any
 
-from .grouping import GroupedList, GroupedSet
+from .grouper import Grouper
 
 
 T = typing.TypeVar('T')
@@ -64,9 +64,14 @@ class TypedCollection(abc.ABC, typing.Generic[T]):
 class TList(list[T], TypedCollection[T]):
     '''A list of elements with a homogenous type.'''
 
-    def groupby(self, key: typing.Callable[[T], typing.Any]) -> GroupedList[T]:
-        '''Group the elements by multiple keys.'''
-        return GroupedList.from_iterable(self, key, ctype=self.__class__)
+    def __init__(self, *args):
+        super().__init__(*args)
+        self._grouping = Grouper(self)
+    
+    @property
+    def group(self) -> Grouper[T]:
+        '''Access grouping operations for this list.'''
+        return self._grouping
     
     def sort(self, key: typing.Callable[[T], typing.Any] = None, reverse: bool = False) -> typing.Self:
         '''Sort the list, returning a new list.'''
@@ -97,9 +102,14 @@ class TList(list[T], TypedCollection[T]):
 class TSet(set[T], TypedCollection[T]):
     '''A set of elements with a homogenous type.'''
 
-    def groupby(self, key: typing.Callable[[T], typing.Any]) -> GroupedList[T]:
-        '''Group the elements by multiple keys.'''
-        return GroupedSet.from_iterable(self, key, ctype=self.__class__)
+    def __init__(self, *args):
+        super().__init__(*args)
+        self._grouping = Grouper(self)
+    
+    @property
+    def group(self) -> Grouper[T]:
+        '''Access grouping operations for this set.'''
+        return self._grouping
 
     def to_list(self) -> 'TList[T]':
         '''Convert this TSet to a TList.'''

@@ -56,9 +56,9 @@ def test_groupby_dict():
     assert groups.as_dict() == {1: {1: 'a', 2: 'b', 3: 'c'}, 3: {4: 'def', 17: 'fur'}, 2: {16: 'fu'}, 4: {18: 'furr'}, 5: {19: 'furrr'}}
 
 def test_groupby_multi():
-    groups = tcollections.groupby_multi(
+    groups = tcollections._groupby_multi(
         ['abc', 'abcd', 'abb', 'abbc', 'adfg', 'bcdf'],
-        [lambda x: x[0], lambda x: x[1], lambda x: x[2]],
+        lambda x: (x[0], x[1], x[2]),
     )
     expected = {
         'a': {
@@ -76,10 +76,12 @@ def test_groupby_multi():
             },
         },
     }
-    diff = deepdiff.DeepDiff(groups.as_dict(), expected, ignore_type_subclasses=True)#ignore_order=True)
-    print(diff)
-    print(json.dumps(diff, indent=2))
+    diff = deepdiff.DeepDiff(groups.to_dict(), expected, ignore_type_subclasses=True)#ignore_order=True)
+    #print(diff)
+    #print(json.dumps(diff, indent=2))
     #assert groups == expected
+    assert len(diff) == 0
+    print(f'test_groupby_multi passed!')
 
 def test_groupby():
     #groups = pydevin.groupby_dict(
@@ -89,7 +91,7 @@ def test_groupby():
     #print(groups)
     #print(groups.agg(sum))
 
-    groups = tcollections.groupby_dict(
+    groups = tcollections._groupby(
         {1: 'a', 2: 'b', 3: 'c', 4: 'd'},
         lambda x: len(x),
     )
