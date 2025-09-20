@@ -5,8 +5,18 @@ import collections
 import abc
 from typing import Any
 
-from .grouper import Grouper
+from typing import TypeVar, Generic, Callable, Any
+from collections.abc import Iterable, Hashable
 
+#from .groups import CollectionGroup, NestedGroup, create_groups
+from .group_funcs_lowlevel import (
+    _groupby_multi, 
+    _groupby,
+)
+from .groups import Groups, NestedGroups
+
+T = TypeVar('T')
+K = TypeVar('K', bound=Hashable)
 
 T = typing.TypeVar('T')
 #K = typing.TypeVar('K')
@@ -42,22 +52,17 @@ class TypedCollection(abc.ABC, typing.Generic[T]):
     def copy(self) -> typing.Self:
         '''Return a shallow copy of the list.'''
         return self.__class__(self)
-
-    def apply(self, func: typing.Callable[[typing.Self], V]) -> V:
-        '''Aggregate the elements using a function. SAME AS agg().'''
-        return func(self)
-
+    
     def agg(self, func: typing.Callable[[typing.Self], V]) -> V:
         '''Aggregate the elements using a function.'''
         return func(self)
     
     def reduce(self, func: typing.Callable[[V,T], V], start: V, from_left: bool = True) -> T:
         '''Reduce the list using a function with a starting value.'''
-        elements = list(self)
-        ind_iter = range(len(elements)) if from_left else range(len(elements)-1, -1, -1)
+        it = self if from_left else reversed(self)
         value = start
-        for i in ind_iter:
-            value = func(value, elements[i])
+        for e in it:
+            value = func(value, e)
         return value
 
     def __repr__(self):
@@ -135,3 +140,19 @@ class tset(set[T], TypedCollection[T]):
         '''Symmetric difference of two sets.'''
         return self.__class__(super().__xor__(other))
     
+class Grouper(Generic[T]):
+    '''Handles grouping operations for collections through composition.'''
+    
+    def __init__(self, collection: Iterable[T]):
+        self._collection = collection
+
+    def multi(self, key_func: Callable[[T], tuple[K, ...]]) -> NestedGroups[T]:
+        '''Group items from a collection by multiple keys using a single key function that returns a tuple of keys.'''
+        result = _groupby_multi(self._collection, key_func)
+        return NestedGroups.from_dict(result, tlist)
+
+    def by(self, key_func: Callable[[T], K]) -> Groups[T, tlist[T]]:
+        '''Group items from a collection by a single key using a key function.'''
+        result = _groupby(self._collection, key_func)
+        #return Groups({k: tlist(v) for k, v in result.items()})
+        return Groups.from_dict(result, tlist)
