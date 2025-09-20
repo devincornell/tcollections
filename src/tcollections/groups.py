@@ -85,36 +85,6 @@ class NestedGroups(GroupsBase[T]):
                 d[k] = collection_type(v)
         return cls(d)
     
-    def flatten_other(self, collection_type: typing.Type[GroupCollection[T]] = None) -> GroupCollection[T]:
-        """Flatten all grouped collections into a single collection, combining all elements.
-        
-        Args:
-            collection_type: The type of collection to return. If None, defaults to the type 
-                           of the first collection found in the groups.
-        
-        Returns:
-            A single collection containing all elements from all groups.
-        """
-        all_elements = []
-        
-        # Recursively collect all elements
-        def collect_elements(group_or_collection):
-            if isinstance(group_or_collection, GroupsBase):
-                for value in group_or_collection.values():
-                    collect_elements(value)
-            else:
-                all_elements.extend(group_or_collection)
-        
-        # Start collection from this group
-        for value in self.values():
-            collect_elements(value)
-        
-        # Determine collection type if not provided
-        if collection_type is None:
-            collection_type = self.get_collection_type()
-        
-        return collection_type(all_elements)
-
     def ungroup(self, collection_type: typing.Type[GroupCollection[T]] = None) -> GroupCollection[T]:
         """Alias for flatten to combine all elements into a single collection."""
         collection_type = collection_type or self.get_collection_type()
