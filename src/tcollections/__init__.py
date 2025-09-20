@@ -1,5 +1,6 @@
 
 from .group_funcs import (
+    group,
     groupby_multi,
     groupby,
 )
