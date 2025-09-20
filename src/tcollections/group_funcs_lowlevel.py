@@ -107,6 +107,6 @@ class RecursiveDefaultDict(dict[K, Union['RecursiveDefaultDict[K, V]', V]]):
 
     def to_type(self, dict_type: typing.Type[dict], value_type: typing.Type[V]) -> dict[K, Union[dict, V]]:
         '''Convert the RecursiveDefaultDict to a regular dictionary.'''
-        return {k: (dict_type(v.to_type(dict_type, value_type)) if isinstance(v, self.__class__) else value_type(v)) for k, v in self.items()}
+        return dict_type({k: (dict_type(v.to_type(dict_type, value_type)) if isinstance(v, self.__class__) else value_type(v)) for k, v in self.items()})
 
 

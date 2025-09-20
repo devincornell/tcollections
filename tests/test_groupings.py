@@ -55,8 +55,62 @@ def test_groupby_dict():
     #print(groups)
     assert groups.as_dict() == {1: {1: 'a', 2: 'b', 3: 'c'}, 3: {4: 'def', 17: 'fur'}, 2: {16: 'fu'}, 4: {18: 'furr'}, 5: {19: 'furrr'}}
 
+
+def test_groupby():
+    #groups = pydevin.groupby_dict(
+    #    {1: 'a', 2: 'b', 3: 'c', 4: 'd'},
+    #    lambda v: len(v),
+    #)
+    #print(groups)
+    #print(groups.agg(sum))
+
+    groups = tcollections._groupby(
+        {1: 'a', 2: 'b', 3: 'c', 4: 'd'},
+        lambda x: len(x),
+    )
+    print(groups)
+    print(groups.agg(lambda ds: sum(map(ord, ds.values()))))
+
+
+
+
 def test_groupby_multi():
-    groups = tcollections._groupby_multi(
+    elements = ['abc', 'abcd', 'abb', 'abbc', 'adfg', 'bcdf']
+    keys = lambda x: (x[0], x[1], x[2])  # Group by first three characters
+    groups = tcollections._groupby_multi(elements, keys)
+    expected = {
+        'a': {
+            'b': {
+                'c': ['abc', 'abcd'],
+                'b': ['abb', 'abbc'],
+            },
+            'd': {
+                'f': ['adfg'],
+            },
+        },
+        'b': {
+            'c': {
+                'd': ['bcdf'],
+            },
+        },
+    }
+    print(type(groups.to_dict()))
+    #print(type(groups.to_dict)))
+    print(json.dumps(groups.to_dict(), indent=2))
+    #print(groups.to_dict())
+    diff = deepdiff.DeepDiff(groups.to_dict(), expected, ignore_type_subclasses=True)#ignore_order=True)
+    assert len(diff) == 0
+
+    groups = tcollections.groupby_multi(elements, keys)
+    diff = deepdiff.DeepDiff(groups.to_dict(), expected, ignore_type_subclasses=True)#ignore_order=True)
+    print(diff)
+    assert len(diff) == 0
+
+    print(f'test_groupby_multi passed!')
+
+
+def test_groupby_multi2():
+    groups = tcollections.groupby_multi(
         ['abc', 'abcd', 'abb', 'abbc', 'adfg', 'bcdf'],
         lambda x: (x[0], x[1], x[2]),
     )
@@ -77,27 +131,16 @@ def test_groupby_multi():
         },
     }
     diff = deepdiff.DeepDiff(groups.to_dict(), expected, ignore_type_subclasses=True)#ignore_order=True)
-    #print(diff)
+    print(diff)
     #print(json.dumps(diff, indent=2))
     #assert groups == expected
     assert len(diff) == 0
     print(f'test_groupby_multi passed!')
 
-def test_groupby():
-    #groups = pydevin.groupby_dict(
-    #    {1: 'a', 2: 'b', 3: 'c', 4: 'd'},
-    #    lambda v: len(v),
-    #)
-    #print(groups)
-    #print(groups.agg(sum))
 
-    groups = tcollections._groupby(
-        {1: 'a', 2: 'b', 3: 'c', 4: 'd'},
-        lambda x: len(x),
-    )
-    print(groups)
-    print(groups.agg(lambda ds: sum(map(ord, ds.values()))))
+
 
 if __name__ == '__main__':
     test_groupby_multi()
+    test_groupby_multi2()
 
