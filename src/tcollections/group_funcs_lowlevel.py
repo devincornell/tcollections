@@ -39,7 +39,7 @@ def _groupby(iterable: Iterable[T], key_func: Callable[[T], K]) -> dict[K, list[
 
 
 
-def _groupby_multi(iterable: Iterable[T], key_func: Callable[[T], tuple[K, ...]]) -> RecursiveDefaultDict:
+def _groupby_multi(iterable: Iterable[T], key_func: Callable[[T], tuple[K, ...]]) -> dict[K,list[T]|dict[K,list[T]]]:
     '''Group items from a collection by multiple keys using a single key function that returns a tuple of keys.
     Creates a nested tree structure where each level corresponds to one key in the tuple.
     The leaf nodes contain lists of elements that share all the same keys.
@@ -74,7 +74,7 @@ def _groupby_multi(iterable: Iterable[T], key_func: Callable[[T], tuple[K, ...]]
         current[last_key].append(element)
     
     # Convert RecursiveDefaultDict to regular dict
-    return result
+    return result.to_dict()
 
 
 
