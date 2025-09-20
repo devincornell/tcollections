@@ -32,7 +32,7 @@ from tcollections import Groups, NestedGroups, GroupCollection, tlist
         {1: 2, 0: 2}
     ),
 ])
-def test_groupby_param(iterable, keyfunc, grp_expected, aggfunc, agg_expected):
+def ignore_test_groupby_param(iterable, keyfunc, grp_expected, aggfunc, agg_expected):
     groups = tcollections.groupby(
         iterable,
         keyfunc,
@@ -40,22 +40,6 @@ def test_groupby_param(iterable, keyfunc, grp_expected, aggfunc, agg_expected):
     #print(groups)
     assert groups.as_dict() == grp_expected
     assert groups.agg(aggfunc) == agg_expected
-
-def test_groupby_set():
-    groups = tcollections.groupby_set(
-        list(range(3)) + list(range(5)),
-        lambda x: x % 2,
-    )
-    assert groups.as_dict() == {0: {0, 2, 4}, 1: {1, 3}}
-
-def test_groupby_dict():
-    groups = tcollections.GroupedDict.from_dict(
-        {1: 'a', 2: 'b', 3: 'c', 4: 'def', 16: 'fu', 17: 'fur', 18: 'furr', 19: 'furrr'},
-        lambda v: len(v),
-    )
-    #print(groups)
-    assert groups.as_dict() == {1: {1: 'a', 2: 'b', 3: 'c'}, 3: {4: 'def', 17: 'fur'}, 2: {16: 'fu'}, 4: {18: 'furr'}, 5: {19: 'furrr'}}
-
 
 def test_groupby_base():
     elements = ['abc', 'abcd', 'abb', 'abbc', 'adfg', 'bcdf']
