@@ -1,7 +1,14 @@
 
 from .group_funcs import (
     groupby_multi,
+    groupby,
 )
+from .groups import (
+    Groups,
+    NestedGroups,
+    GroupCollection,
+)
+
 
 #from .grouping import groupby, groupby_set, groupby_multi, groupby_dict, GroupedList, GroupedSet, GroupedDict
 from .typed_collections import (

@@ -98,9 +98,6 @@ class RecursiveDefaultDict(dict[K, Union['RecursiveDefaultDict[K, V]', V]]):
         except KeyError:
             return self.__missing__(key)
 
-    #def to_dict(self) -> dict[K, Union[dict, V]]:
-    #    '''Convert the RecursiveDefaultDict to a regular dictionary.'''
-    #    return {k: (v.to_dict() if isinstance(v, self.__class__) else v) for k, v in self.items()}
     def to_dict(self) -> dict[K, Union[dict, V]]:
         '''Convert the RecursiveDefaultDict to a regular dictionary.'''
         return self.to_type(dict, list)
