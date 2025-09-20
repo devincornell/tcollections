@@ -43,6 +43,10 @@ class TypedCollection(abc.ABC, typing.Generic[T]):
         '''Return a shallow copy of the list.'''
         return self.__class__(self)
 
+    def apply(self, func: typing.Callable[[typing.Self], V]) -> V:
+        '''Aggregate the elements using a function. SAME AS agg().'''
+        return func(self)
+
     def agg(self, func: typing.Callable[[typing.Self], V]) -> V:
         '''Aggregate the elements using a function.'''
         return func(self)
@@ -61,7 +65,7 @@ class TypedCollection(abc.ABC, typing.Generic[T]):
 
 
 
-class TList(list[T], TypedCollection[T]):
+class tlist(list[T], TypedCollection[T]):
     '''A list of elements with a homogenous type.'''
 
     def __init__(self, *args):
@@ -81,16 +85,16 @@ class TList(list[T], TypedCollection[T]):
         '''Return a reversed version of the list. Overwrites list reverse, which executes in-place.'''
         return self.__class__(reversed(self))
 
-    def to_set(self) -> 'TSet[T]':
-        '''Convert this TList to a TSet.'''
-        return TSet(self)
+    def to_set(self) -> 'tset[T]':
+        '''Convert this tlist to a tset.'''
+        return tset(self)
 
     def __add__(self, other: typing.Self) -> typing.Self:
-        '''Concatenate two TLists.'''
+        '''Concatenate two tlists.'''
         return self.__class__(super().__add__(other))
     
     def __sub__(self, other: typing.Self) -> typing.Self:
-        '''Subtract two TLists.'''
+        '''Subtract two tlists.'''
         return self.__class__(super().__sub__(other))
     
     def __mul__(self, n: int) -> typing.Self:
@@ -99,7 +103,7 @@ class TList(list[T], TypedCollection[T]):
     
 
 
-class TSet(set[T], TypedCollection[T]):
+class tset(set[T], TypedCollection[T]):
     '''A set of elements with a homogenous type.'''
 
     def __init__(self, *args):
@@ -111,9 +115,9 @@ class TSet(set[T], TypedCollection[T]):
         '''Access grouping operations for this set.'''
         return self._grouping
 
-    def to_list(self) -> 'TList[T]':
-        '''Convert this TSet to a TList.'''
-        return TList(self)
+    def to_list(self) -> 'tlist[T]':
+        '''Convert this tset to a tlist.'''
+        return tlist(self)
 
     def __or__(self, other: typing.Self) -> typing.Self:
         '''Union of two sets.'''

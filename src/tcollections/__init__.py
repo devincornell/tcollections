@@ -5,8 +5,8 @@ from .group_funcs import (
 
 #from .grouping import groupby, groupby_set, groupby_multi, groupby_dict, GroupedList, GroupedSet, GroupedDict
 from .typed_collections import (
-    TList, 
-    TSet,
+    tlist, 
+    tset,
 )
 from .group_funcs_lowlevel import (
     _groupby_multi, 

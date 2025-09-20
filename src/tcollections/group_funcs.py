@@ -12,16 +12,16 @@ U = TypeVar('U')
 
 from .group_funcs_lowlevel import _groupby, _groupby_multi
 from .groups import Groups
-from .typed_collections import TList, TSet
+from .typed_collections import tlist, tset
 
 
-def groupby_multi(iterable: Iterable[T], key_func: Callable[[T], tuple[K, ...]]) -> Groups[T, Groups|TList[T]]:
+def groupby_multi(iterable: Iterable[T], key_func: Callable[[T], tuple[K, ...]]) -> Groups[T, Groups|tlist[T]]:
     '''Group items from a collection by multiple keys using a single key function that returns a tuple of keys.'''
     result = _groupby_multi(iterable, key_func)
-    return result.to_type(Groups, TList)
+    return result.to_type(Groups, tlist)
 
-def groupby(iterable: Iterable[T], key_func: Callable[[T], K]) -> Groups[T, TList[T]]:
+def groupby(iterable: Iterable[T], key_func: Callable[[T], K]) -> Groups[T, tlist[T]]:
     '''Group items from a collection by a single key using a key function.'''
     result = _groupby(iterable, key_func)
-    return Groups({k: TList(v) for k, v in result.items()})
+    return Groups({k: tlist(v) for k, v in result.items()})
 
