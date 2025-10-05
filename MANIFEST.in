@@ -1,0 +1,9 @@
+include README.md
+include LICENSE
+recursive-include examples *.ipynb
+recursive-exclude * __pycache__
+recursive-exclude * *.pyc
+recursive-exclude * *.pyo
+recursive-exclude * *.orig
+recursive-exclude * *.rej
+recursive-exclude * .git*

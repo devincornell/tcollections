@@ -1,4 +1,6 @@
 
+__version__ = "0.1.0"
+
 from .group_funcs import (
     group,
     groupby_multi,
@@ -22,4 +24,11 @@ from .group_funcs_lowlevel import (
 )
 
 from . import chain
+
+__all__ = [
+    "group", "groupby_multi", "groupby",
+    "Groups", "NestedGroups", "GroupCollection", 
+    "tlist", "tset",
+    "chain",
+]
 
