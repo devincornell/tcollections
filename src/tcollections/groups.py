@@ -5,6 +5,9 @@ from abc import ABC, abstractmethod
 import typing  # Keep this for backward compatibility
 import json
 
+if typing.TYPE_CHECKING:
+    from .chain import ChainFunc
+
 T = TypeVar('T')
 K = TypeVar('K', bound=Hashable)  # Keys must be hashable
 V = TypeVar('V')
@@ -44,6 +47,10 @@ class GroupsBase(dict[K, Self|GroupCollection[T]]):
     def __repr__(self) -> str:
         """String representation of the grouped collection."""
         return f'{self.__class__.__name__}({dict(self)})'
+    
+    def __rshift__(self, chain_func: ChainFunc) -> typing.Self:
+        '''Pipe the collection into a function or another collection.'''
+        return chain_func(self)
     
     def to_json(self, **kwargs) -> str:
         """Visualize the group structure."""

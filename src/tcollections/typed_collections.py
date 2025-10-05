@@ -15,11 +15,13 @@ from .group_funcs_lowlevel import (
 )
 from .groups import Groups, NestedGroups
 
-T = TypeVar('T')
-K = TypeVar('K', bound=Hashable)
+if typing.TYPE_CHECKING:
+    from .chain import ChainFunc
+
+
 
 T = typing.TypeVar('T')
-#K = typing.TypeVar('K')
+K = TypeVar('K', bound=Hashable)
 V = typing.TypeVar('V')
 
 class DEFAULT_VALUE_TYPE:
@@ -36,6 +38,11 @@ class TypedCollection(abc.ABC, typing.Generic[T]):
     def __iter__(self) -> typing.Iterator[T]:
         '''All collections must be iterable.'''
         pass
+
+    @property
+    def group(self) -> Grouper[T]:
+        '''Access grouping operations for this set.'''
+        return Grouper(self)
 
     def map(self, func: abc.Callable[[T], V]) -> typing.Self[V]:
         '''Map a function over the list.'''
@@ -65,6 +72,10 @@ class TypedCollection(abc.ABC, typing.Generic[T]):
             value = func(value, e)
         return value
 
+    def __rshift__(self, chain_func: ChainFunc) -> typing.Self:
+        '''Pipe the collection into a function or another collection.'''
+        return chain_func(self)
+
     def __repr__(self):
         return f'{self.__class__.__name__}({super().__repr__()})'
 
@@ -72,15 +83,6 @@ class TypedCollection(abc.ABC, typing.Generic[T]):
 
 class tlist(list[T], TypedCollection[T]):
     '''A list of elements with a homogenous type.'''
-
-    def __init__(self, *args):
-        super().__init__(*args)
-        self._grouping = Grouper(self)
-    
-    @property
-    def group(self) -> Grouper[T]:
-        '''Access grouping operations for this list.'''
-        return self._grouping
     
     def sort(self, key: typing.Callable[[T], typing.Any] = None, reverse: bool = False) -> typing.Self:
         '''Sort the list, returning a new list.'''
@@ -110,15 +112,6 @@ class tlist(list[T], TypedCollection[T]):
 
 class tset(set[T], TypedCollection[T]):
     '''A set of elements with a homogenous type.'''
-
-    def __init__(self, *args):
-        super().__init__(*args)
-        self._grouping = Grouper(self)
-    
-    @property
-    def group(self) -> Grouper[T]:
-        '''Access grouping operations for this set.'''
-        return self._grouping
 
     def to_list(self) -> 'tlist[T]':
         '''Convert this tset to a tlist.'''

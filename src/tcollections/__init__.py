@@ -20,3 +20,6 @@ from .group_funcs_lowlevel import (
     _groupby_multi, 
     _groupby,
 )
+
+from . import chain
+
